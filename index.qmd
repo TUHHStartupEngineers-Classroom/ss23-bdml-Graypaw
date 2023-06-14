@@ -11,3 +11,9 @@ This is a template example for lab journaling. Students in the data science cour
 ## Challenge 1
 
 Check https://tuhhstartupengineers-classroom.github.io/ss23-bdml-Graypaw/Chapter_1_Challenge.html
+
+## Challenge 2
+
+Check https://tuhhstartupengineers-classroom.github.io/ss23-bdml-Graypaw/Chapter_2_Challenge.html
+
+## Challenge 3
