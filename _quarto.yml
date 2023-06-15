@@ -14,14 +14,18 @@ website:
         text: Home
       - text: "Journal"
         menu: 
-          - text: "01 Tidyverse"
-            file: content/01_journal/01_tidyverse.qmd
-          - text: "02 Data Acquisition"
-            file: content/01_journal/02_data_acquisition.qmd
-          - text: "03 Data Wrangling"
-            file: content/01_journal/03_data_wrangling.qmd
-          - text: "04 Data Visualization"
-            file: content/01_journal/04_data_visualization.qmd
+          - text: "First Challenge"
+            file: Chapter_1_Challenge.Rmd
+          - text: "Second Challenge"
+            file: Chapter_2_Challenge.Rmd
+          - text: "Third Challenge"
+            file: Chapter_3_Challenge.Rmd
+          - text: "Fourth Challenge"
+            file: Chapter_4_Challenge.Rmd
+          - text: "Fifth Challenge"
+            file: Chapter_5_Challenge.Rmd
+          - text: "Sixth Challenge"
+            file: Chapter_6_Challenge.Rmd
       - text: "Class notes"
         file: content/02_notes/05_class_notes.qmd
       - text: "Links"

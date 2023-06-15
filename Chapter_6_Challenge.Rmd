@@ -96,24 +96,22 @@ case_1 %>%
 
 Other function
 ```{r}
-plot_explanations <- function(data) {
-  # Convert non-numeric columns to factors
-  non_numeric_cols <- sapply(data, function(x) !is.numeric(x))
-  data[, non_numeric_cols] <- lapply(data[, non_numeric_cols], as.factor)
+library(ggplot2)
 
-  # Convert data to long format
-  data_long <- tidyr::gather(data, key = "Feature", value = "Importance")
+# Extract explanation values and feature names
+explanation_values <- explanation$feature_weight
+feature_names <- explanation$feature
 
-  # Plot the explanations using ggplot
-  ggplot(data = data_long, aes(x = Feature, y = as.numeric(factor(1)), fill = Importance)) +
-    geom_tile() +
-    xlab("Feature") +
-    ylab("") +
-    ggtitle("Feature Importances") +
-    scale_fill_gradient(low = "white", high = "steelblue") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1),
-          panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank()) +
-    facet_wrap(~ Feature, scales = "free", ncol = 2)
-}
+# Create a dataframe for plotting
+df_explanations <- data.frame(feature = feature_names, value = explanation_values)
+
+# Plot the explanations using geom_tile() and facet_wrap()
+ggplot(df_explanations, aes(x = feature, y = 1, fill = value)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "white", high = "steelblue") +
+  facet_wrap(~ 1, nrow = 1, scales = "free_x") +
+  labs(x = "", y = "") +
+  theme_minimal()
 ```
+
+I swear I tried ;_;

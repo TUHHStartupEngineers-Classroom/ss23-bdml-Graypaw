@@ -263,3 +263,59 @@ lift_transformed_tbl %>%
         y = "Lift"
     )
 ```
+
+Creating a dashboard
+```{r}
+library(ggplot2)
+library(cowplot)
+
+plot_ROC <- model_metrics_tbl %>%
+    mutate(
+        # Extract the model names
+        path = str_split(path, pattern = "/", simplify = T)[,1] %>% as_factor(),
+        auc  = auc %>% round(3) %>% as.character() %>% as_factor()
+        ) %>%
+    ggplot(aes(fpr, tpr, color = path, linetype = auc)) +
+    geom_line(size = 1) +
+    
+    # just for demonstration purposes
+    geom_abline(color = "red", linetype = "dotted") +
+    
+    labs(
+        title = "ROC Plot",
+        subtitle = "Performance of Top Performing Model"
+    )
+
+plot_prec_rec <- model_metrics_tbl %>%
+    mutate(
+        path = str_split(path, pattern = "/", simplify = T)[,1] %>% as_factor(),
+        auc  = auc %>% round(3) %>% as.character() %>% as_factor()
+    ) %>%
+    ggplot(aes(recall, precision, color = path, linetype = auc)) +
+    geom_line(size = 1) +
+    labs(
+        title = "Precision vs Recall Plot",
+        subtitle = "Performance of Top Performing Model"
+    )
+
+plot_gain <- gain_transformed_tbl %>%
+    ggplot(aes(x = cumulative_data_fraction, y = value, color = key)) +
+    geom_line(size = 1.5) +
+    labs(
+        title = "Gain Chart",
+        x = "Cumulative Data Fraction",
+        y = "Gain"
+    )
+
+plot_lift <- lift_transformed_tbl %>%
+    ggplot(aes(x = cumulative_data_fraction, y = value, color = key)) +
+    geom_line(size = 1.5) +
+    labs(
+        title = "Lift Chart",
+        x = "Cumulative Data Fraction",
+        y = "Lift"
+    )
+
+dashboard <- plot_grid(plot_ROC, plot_prec_rec, plot_gain, plot_lift, nrow = 2, ncol = 2)
+dashboard
+```

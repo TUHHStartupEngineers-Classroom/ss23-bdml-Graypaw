@@ -689,6 +689,79 @@ Hyper-Parameter Search Summary: ordered by increasing logloss
 </div>
 </div>
 </div>
+<p>Creating a dashboard</p>
+<div class="cell" data-hash="Chapter_5_Challenge_cache/html/unnamed-chunk-16_8df4ec23b0347df3d59a79759a8f3ba9">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cowplot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attache Paket: 'cowplot'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Das folgende Objekt ist maskiert 'package:lubridate':
+
+    stamp</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>plot_ROC <span class="ot">&lt;-</span> model_metrics_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Extract the model names</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">path =</span> <span class="fu">str_split</span>(path, <span class="at">pattern =</span> <span class="st">"/"</span>, <span class="at">simplify =</span> T)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as_factor</span>(),</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">auc  =</span> auc <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">3</span>) <span class="sc">%&gt;%</span> <span class="fu">as.character</span>() <span class="sc">%&gt;%</span> <span class="fu">as_factor</span>()</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>        ) <span class="sc">%&gt;%</span></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(fpr, tpr, <span class="at">color =</span> path, <span class="at">linetype =</span> auc)) <span class="sc">+</span></span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># just for demonstration purposes</span></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_abline</span>(<span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>) <span class="sc">+</span></span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">"ROC Plot"</span>,</span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">subtitle =</span> <span class="st">"Performance of Top Performing Model"</span></span>
+<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>plot_prec_rec <span class="ot">&lt;-</span> model_metrics_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">path =</span> <span class="fu">str_split</span>(path, <span class="at">pattern =</span> <span class="st">"/"</span>, <span class="at">simplify =</span> T)[,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as_factor</span>(),</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">auc  =</span> auc <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">3</span>) <span class="sc">%&gt;%</span> <span class="fu">as.character</span>() <span class="sc">%&gt;%</span> <span class="fu">as_factor</span>()</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(recall, precision, <span class="at">color =</span> path, <span class="at">linetype =</span> auc)) <span class="sc">+</span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">"Precision vs Recall Plot"</span>,</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">subtitle =</span> <span class="st">"Performance of Top Performing Model"</span></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>plot_gain <span class="ot">&lt;-</span> gain_transformed_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> cumulative_data_fraction, <span class="at">y =</span> value, <span class="at">color =</span> key)) <span class="sc">+</span></span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">"Gain Chart"</span>,</span>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="st">"Cumulative Data Fraction"</span>,</span>
+<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> <span class="st">"Gain"</span></span>
+<span id="cb44-20"><a href="#cb44-20" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb44-21"><a href="#cb44-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-22"><a href="#cb44-22" aria-hidden="true" tabindex="-1"></a>plot_lift <span class="ot">&lt;-</span> lift_transformed_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb44-23"><a href="#cb44-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> cumulative_data_fraction, <span class="at">y =</span> value, <span class="at">color =</span> key)) <span class="sc">+</span></span>
+<span id="cb44-24"><a href="#cb44-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
+<span id="cb44-25"><a href="#cb44-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb44-26"><a href="#cb44-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">"Lift Chart"</span>,</span>
+<span id="cb44-27"><a href="#cb44-27" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="st">"Cumulative Data Fraction"</span>,</span>
+<span id="cb44-28"><a href="#cb44-28" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> <span class="st">"Lift"</span></span>
+<span id="cb44-29"><a href="#cb44-29" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb44-30"><a href="#cb44-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-31"><a href="#cb44-31" aria-hidden="true" tabindex="-1"></a>dashboard <span class="ot">&lt;-</span> <span class="fu">plot_grid</span>(plot_ROC, plot_prec_rec, plot_gain, plot_lift, <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb44-32"><a href="#cb44-32" aria-hidden="true" tabindex="-1"></a>dashboard</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="Chapter_5_Challenge_files/figure-html/unnamed-chunk-16-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="Chapter_5_Challenge_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
 
 
 
@@ -1042,7 +1115,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"selector":".lightbox","openEffect":"zoom","loop":true,"closeEffect":"zoom","descPosition":"bottom"});</script>
+<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","loop":true,"closeEffect":"zoom","selector":".lightbox","openEffect":"zoom"});</script>
 
 
 
