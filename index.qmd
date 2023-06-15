@@ -8,12 +8,14 @@ author: "Joschka Schwarz"
 
 This is a template example for lab journaling. Students in the data science courses at the Institute of Entrepreneurship will use this template to learn R for business analytics. Students can replace this text as they wish.
 
-## Challenge 1
+## How to use
 
-Check https://tuhhstartupengineers-classroom.github.io/ss23-bdml-Graypaw/Chapter_1_Challenge.html
+1. Accept the assignment and get your own github repo.
 
-## Challenge 2
+2. Blog/journal what you are doing in R, by editing the `.qmd` files. 
 
-Check https://tuhhstartupengineers-classroom.github.io/ss23-bdml-Graypaw/Chapter_2_Challenge.html
+3. See the links page for lots of helpful links on learning R.
 
-## Challenge 3
+4. Change everything to make it your own.
+
+5. Make sure to render you website everytime before you want to upload changes
