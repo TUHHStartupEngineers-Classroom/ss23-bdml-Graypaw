@@ -1,0 +1,119 @@
+Libraries
+```{r}
+library(h2o)
+library(recipes)
+library(readxl)
+library(tidyverse)
+library(tidyquant)
+library(lime)
+```
+
+Plot_Features function
+```{r}
+plot_features <- function(data) {
+  numeric_cols <- sapply(data, is.numeric)
+  
+  # Compute the mean importance across rows
+  mean_importance <- colMeans(data[, numeric_cols, drop = FALSE])
+
+  # Create a data frame for plotting
+  plot_data <- data.frame(
+    Feature = colnames(data)[numeric_cols],
+    Importance = mean_importance
+  )
+
+  # Sort the features by importance
+  plot_data <- plot_data[order(plot_data$Importance, decreasing = TRUE), ]
+
+  # Plot the feature importance using ggplot
+  ggplot(data = plot_data, aes(x = reorder(Feature, Importance), y = Importance)) +
+    geom_bar(stat = "identity", fill = "steelblue") +
+    xlab("Feature") +
+    ylab("Importance") +
+    ggtitle("Feature Importance") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+}
+```
+
+```{r}
+dataset <- read.csv("product_backorders.csv")
+
+data_recipe <- recipe(went_on_backorder ~ ., data = dataset) %>%
+  step_dummy(all_nominal(), -all_outcomes()) %>%
+  step_zv(all_predictors()) %>%
+  step_normalize(all_predictors()) %>%
+  prep()
+
+prepared_data <- bake(data_recipe, new_data = dataset)
+
+h2o.init()
+
+split_h2o <- h2o.splitFrame(as.h2o(prepared_data), ratios = c(0.85))
+train_h2o <- split_h2o[[1]]
+valid_h2o <- split_h2o[[2]]
+
+automl_leader <- h2o.loadModel("leadermodel_h2o\\StackedEnsemble_AllModels_4_AutoML_11_20230615_00001")
+
+explainer <- as_tibble(train_h2o) %>%
+    select(-went_on_backorder) %>%
+    lime(
+        model           = automl_leader,
+        bin_continuous  = TRUE,
+        n_bins          = 4,
+        quantile_bins   = TRUE
+    )
+```
+
+```{r}
+explanation <- as_tibble(valid_h2o) %>%
+    slice(1) %>%
+    select(-went_on_backorder) %>%
+    lime::explain(
+    
+        # Pass our explainer object
+        explainer = explainer,
+        # Because it is a binary classification model: 1
+        n_labels   = 1,
+        # number of features to be returned
+        n_features = 8,
+        # number of localized linear models
+        n_permutations = 5000,
+        # Let's start with 1
+        kernel_width   = 1
+    )
+```
+
+```{r}
+explanation %>% 
+  as.tibble()
+  
+case_1 <- explanation %>%
+    filter(case == 1)
+
+case_1 %>%
+    plot_features()
+```
+
+Other function
+```{r}
+plot_explanations <- function(data) {
+  # Convert non-numeric columns to factors
+  non_numeric_cols <- sapply(data, function(x) !is.numeric(x))
+  data[, non_numeric_cols] <- lapply(data[, non_numeric_cols], as.factor)
+
+  # Convert data to long format
+  data_long <- tidyr::gather(data, key = "Feature", value = "Importance")
+
+  # Plot the explanations using ggplot
+  ggplot(data = data_long, aes(x = Feature, y = as.numeric(factor(1)), fill = Importance)) +
+    geom_tile() +
+    xlab("Feature") +
+    ylab("") +
+    ggtitle("Feature Importances") +
+    scale_fill_gradient(low = "white", high = "steelblue") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank()) +
+    facet_wrap(~ Feature, scales = "free", ncol = 2)
+}
+```

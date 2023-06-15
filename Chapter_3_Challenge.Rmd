@@ -1,0 +1,218 @@
+```{r}
+data <- read.csv("datasets-1067-1925-WA_Fn-UseC_-HR-Employee-Attrition.csv")
+head(data)
+```
+
+```{r}
+boxplot(MonthlyIncome ~ Attrition, data = data, ylab = "Monthly Income", xlab = "Attrition")
+```
+
+Clearly the employees with attrition have a much lower monthly income than those without.
+
+```{r}
+boxplot(PercentSalaryHike ~ Attrition, data = data, ylab = "Percent Salary Hike", xlab = "Attrition")
+t.test(PercentSalaryHike ~ Attrition, data = data)
+```
+
+Both the boxplot and the t.test point to no significant relation between Percent Salary Hike and Attrition, thus it is difficult to deduce anything.
+
+```{r}
+attrition_yes <- subset(data, Attrition == "Yes")
+attrition_no <- subset(data, Attrition == "No")
+
+# Count the occurrences of each StockOptionLevel for employees with attrition
+attrition_yes_counts <- table(attrition_yes$StockOptionLevel)
+
+# Count the occurrences of each StockOptionLevel for employees without attrition
+attrition_no_counts <- table(attrition_no$StockOptionLevel)
+
+# Combine the counts into a data frame
+plot_data <- data.frame(
+  StockOptionLevel = factor(1:4),
+  Attrition = "Yes",
+  Count = attrition_yes_counts,
+  stringsAsFactors = FALSE
+)
+plot_data <- rbind(
+  plot_data,
+  data.frame(
+    StockOptionLevel = factor(1:4),
+    Attrition = "No",
+    Count = attrition_no_counts,
+    stringsAsFactors = FALSE
+  )
+)
+
+# Create the stacked bar plot
+library(ggplot2)
+ggplot(plot_data, aes(x = StockOptionLevel, y = Count.Freq, fill = Attrition)) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(x = "Stock Option Level", y = "Count", fill = "Attrition")
+
+```
+
+The employees leaving the company appear to have a higher stock option level than those that are staying. However an overwhelming amount of data is pointing towards a lower stock option level in general.
+
+```{r}
+# Count the occurrences of each Environment Satisfaction level for employees with attrition
+attrition_yes_counts <- table(attrition_yes$EnvironmentSatisfaction)
+
+# Count the occurrences of each Environment Satisfaction level for employees without attrition
+attrition_no_counts <- table(attrition_no$EnvironmentSatisfaction)
+
+# Combine the counts into a data frame
+plot_data <- data.frame(
+  EnvironmentSatisfaction = factor(1:4),
+  Attrition = "Yes",
+  Count = attrition_yes_counts,
+  stringsAsFactors = FALSE
+)
+plot_data <- rbind(
+  plot_data,
+  data.frame(
+    EnvironmentSatisfaction = factor(1:4),
+    Attrition = "No",
+    Count = attrition_no_counts,
+    stringsAsFactors = FALSE
+  )
+)
+
+# Create the stacked bar plot
+library(ggplot2)
+ggplot(plot_data, aes(x = EnvironmentSatisfaction, y = Count.Freq, fill = Attrition)) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(x = "Environment Satisfaction", y = "Count", fill = "Attrition")
+
+```
+
+It is difficult to determine anything about the interaction between Environment Satisfaction and Attrition based on this visualization.
+
+```{r}
+# Count the occurrences of each WorkLifeBalance level for employees with attrition
+attrition_yes_counts <- table(attrition_yes$WorkLifeBalance)
+
+# Count the occurrences of each WorkLifeBalance level for employees without attrition
+attrition_no_counts <- table(attrition_no$WorkLifeBalance)
+
+# Combine the counts into a data frame
+plot_data <- data.frame(
+  WorkLifeBalance = factor(1:4),
+  Attrition = "Yes",
+  Count = attrition_yes_counts,
+  stringsAsFactors = FALSE
+)
+plot_data <- rbind(
+  plot_data,
+  data.frame(
+    WorkLifeBalance = factor(1:4),
+    Attrition = "No",
+    Count = attrition_no_counts,
+    stringsAsFactors = FALSE
+  )
+)
+
+# Create the stacked bar plot
+library(ggplot2)
+ggplot(plot_data, aes(x = WorkLifeBalance, y = Count.Freq, fill = Attrition)) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(x = "Work-Life Balance", y = "Count", fill = "Attrition")
+```
+
+While it is also here a bit difficult to determine anything it seems like employees without attrition are slightly more present in the higher levels of work-life balance compared to employees with attrition.
+
+```{r}
+# Count the occurrences of each JobInvolvement level for employees with attrition
+attrition_yes_counts <- table(attrition_yes$JobInvolvement)
+
+# Count the occurrences of each JobInvolvement level for employees without attrition
+attrition_no_counts <- table(attrition_no$JobInvolvement)
+
+# Combine the counts into a data frame
+plot_data <- data.frame(
+  JobInvolvement = factor(1:4),
+  Attrition = "Yes",
+  Count = attrition_yes_counts,
+  stringsAsFactors = FALSE
+)
+plot_data <- rbind(
+  plot_data,
+  data.frame(
+    JobInvolvement = factor(1:4),
+    Attrition = "No",
+    Count = attrition_no_counts,
+    stringsAsFactors = FALSE
+  )
+)
+
+# Create the stacked bar plot
+library(ggplot2)
+ggplot(plot_data, aes(x = JobInvolvement, y = Count.Freq, fill = Attrition)) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(x = "Job Involvement", y = "Count", fill = "Attrition")
+```
+
+The plot for Job Involvement seems to be almost the same as for Work-Life Balance, just that the people without attrition are even more predominant in the higher levels now compared to the people with attrition.
+
+```{r}
+# Count the occurrences of OverTime for employees with attrition
+attrition_yes_counts <- table(attrition_yes$OverTime)
+
+# Count the occurrences of OverTime for employees without attrition
+attrition_no_counts <- table(attrition_no$OverTime)
+
+# Combine the counts into a data frame
+plot_data <- data.frame(
+  OverTime = factor(c("No", "Yes")),
+  Attrition = "Yes",
+  Count = attrition_yes_counts,
+  stringsAsFactors = FALSE
+)
+plot_data <- rbind(
+  plot_data,
+  data.frame(
+    OverTime = factor(c("No", "Yes")),
+    Attrition = "No",
+    Count = attrition_no_counts,
+    stringsAsFactors = FALSE
+  )
+)
+
+# Create the stacked bar plot
+library(ggplot2)
+ggplot(plot_data, aes(x = OverTime, y = Count.Freq, fill = Attrition)) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(x = "OverTime", y = "Count", fill = "Attrition")
+```
+
+Very clearly the people without attrition are working much less overtime than the people with attrition. Reduce the overtime for sure.
+
+```{r}
+ggplot(data, aes(x = Attrition, y = TrainingTimesLastYear)) +
+  geom_boxplot() +
+  labs(x = "Attrition", y = "Training Times Last Year")
+```
+
+It is very difficult to deduce anything based on this visualization...
+
+```{r}
+# Create the box plot
+library(ggplot2)
+ggplot(data, aes(x = Attrition, y = YearsAtCompany)) +
+  geom_boxplot() +
+  labs(x = "Attrition", y = "Years at Company")
+```
+
+Generally the people without attrition are at the company for longer already than the ones with attrition.
+
+```{r}
+# Create the box plot
+library(ggplot2)
+ggplot(data, aes(x = Attrition, y = YearsSinceLastPromotion)) +
+  geom_boxplot() +
+  labs(x = "Attrition", y = "Years Since Last Promotion")
+
+result <- t.test(YearsSinceLastPromotion ~ Attrition, data = data)
+result
+```
+
+No significant deduction is possible from this visualization even though by the t.test the mean for employees without attrition is higher. This probably means that the years since last promotion hold less significance for attrition than other factors.

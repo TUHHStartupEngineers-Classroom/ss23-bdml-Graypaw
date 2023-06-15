@@ -1,0 +1,69 @@
+Load dataset
+```{r}
+dataset <- read.csv("product_backorders.csv")
+```
+
+Preprocessing
+```{r}
+library(tidyverse)
+library(recipes)
+
+data_recipe <- recipe(went_on_backorder ~ ., data = dataset) %>%
+  step_dummy(all_nominal(), -all_outcomes()) %>%
+  step_zv(all_predictors()) %>%
+  step_normalize(all_predictors()) %>%
+  prep()
+
+prepared_data <- bake(data_recipe, new_data = dataset)
+```
+
+Splitting into training and testing
+```{r}
+library(rsample)
+library(h2o)
+
+h2o.init()
+
+split_h2o <- h2o.splitFrame(as.h2o(prepared_data), ratios = c(0.85))
+train_h2o <- split_h2o[[1]]
+valid_h2o <- split_h2o[[2]]
+```
+
+Specifying variables
+```{r}
+# Set the target and predictors
+y <- "went_on_backorder"
+x <- setdiff(names(train_h2o), y)
+```
+
+Get h2o and start auto-ML-ing
+```{r}
+automl <- h2o.automl(
+  x = x,
+  y = y,
+  training_frame = train_h2o,
+  validation_frame = valid_h2o,
+  max_runtime_secs = 300,
+  nfolds = 5
+)
+```
+
+Get some info about the results
+```{r}
+leaderboard <- automl@leaderboard
+leaderboard
+```
+
+Get the best model by metrics and make predictions using it
+```{r}
+test_h2o <- h2o.splitFrame(as.h2o(prepared_data), ratios = c(0.85))[[2]]
+
+best_model <- automl@leader
+predictions <- h2o.predict(best_model, newdata = test_h2o)
+predictions
+```
+
+Saving the best model
+```{r}
+h2o.saveModel(best_model, path = ".\\leadermodel_h2o")
+```
